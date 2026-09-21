@@ -1,12 +1,14 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendAppointmentSms } from "@/lib/sms/notifications";
+import { todayISOInBusinessTZ, addDaysToISO, parisWallTimeToUtc } from "@/lib/timezone";
 
 /**
- * Appelé automatiquement toutes les heures par Vercel Cron (voir
- * vercel.json). Cherche les rendez-vous qui ont lieu dans 47 à 49 heures
- * (fenêtre de 2h pour ne rien manquer entre deux exécutions) et n'ont pas
- * encore reçu leur SMS de rappel, puis l'envoie.
+ * Appelé automatiquement une fois par jour par Vercel Cron (voir
+ * vercel.json — le plan gratuit de Vercel limite les tâches planifiées à
+ * une exécution par jour). Envoie le SMS de rappel à toutes les clientes
+ * dont le rendez-vous a lieu "après-demain" (soit environ 48h avant,
+ * à la journée près puisqu'on ne peut vérifier qu'une fois par jour).
  */
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
@@ -15,9 +17,9 @@ export async function GET(request: NextRequest) {
   }
 
   const supabase = createAdminClient();
-  const now = Date.now();
-  const windowStart = new Date(now + 47 * 60 * 60 * 1000).toISOString();
-  const windowEnd = new Date(now + 49 * 60 * 60 * 1000).toISOString();
+  const targetDateISO = addDaysToISO(todayISOInBusinessTZ(), 2);
+  const windowStart = parisWallTimeToUtc(targetDateISO, "00:00").toISOString();
+  const windowEnd = parisWallTimeToUtc(targetDateISO, "23:59").toISOString();
 
   const { data: appointments, error } = await supabase
     .from("appointments")
@@ -46,5 +48,5 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  return NextResponse.json({ checked: appointments?.length ?? 0, sent });
+  return NextResponse.json({ targetDate: targetDateISO, checked: appointments?.length ?? 0, sent });
 }

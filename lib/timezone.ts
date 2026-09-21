@@ -67,3 +67,11 @@ export function getDayOfWeekForDate(dateISO: string): number {
   const [year, month, day] = dateISO.split("-").map(Number);
   return new Date(Date.UTC(year, month - 1, day)).getUTCDay();
 }
+
+/** Ajoute (ou retire) des jours à une date calendaire "YYYY-MM-DD". */
+export function addDaysToISO(dateISO: string, days: number): string {
+  const [year, month, day] = dateISO.split("-").map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  date.setUTCDate(date.getUTCDate() + days);
+  return date.toISOString().slice(0, 10);
+}

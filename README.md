@@ -108,7 +108,7 @@ Puis **Deployments → Redeploy**.
 
 ### Vérifier que le rappel automatique est bien activé
 
-Sur Vercel, va dans l'onglet **"Cron Jobs"** de ton projet (dans le menu du haut) : tu dois voir une ligne `/api/cron/reminders` programmée pour s'exécuter toutes les heures. C'est normal qu'elle n'envoie rien tant qu'aucun rendez-vous n'est à 48h près.
+Sur Vercel, va dans l'onglet **"Cron Jobs"** de ton projet (dans le menu du haut) : tu dois voir une ligne `/api/cron/reminders` programmée pour s'exécuter une fois par jour (le plan gratuit de Vercel ne permet qu'une exécution quotidienne, pas toutes les heures — le rappel arrive donc "2 jours avant" à la journée près, pas exactement 48h00 avant). C'est normal qu'elle n'envoie rien tant qu'aucun rendez-vous n'est concerné.
 
 ## Structure du projet (pour référence)
 
