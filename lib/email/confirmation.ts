@@ -2,15 +2,21 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getEmailTemplate, renderTemplate } from "@/lib/email/templates";
 import { sendEmail } from "@/lib/email/send";
 import { getSiteSettings } from "@/lib/settings";
+import { formatParisDate, formatParisTime } from "@/lib/timezone";
 
-export async function sendConfirmationEmail(appointmentId: string) {
+export type AppointmentEmailKind = "confirmation" | "cancellation" | "reschedule";
+
+/**
+ * Envoie l'e-mail correspondant à un événement sur un rendez-vous
+ * (nouvelle réservation, annulation, déplacement), en utilisant le modèle
+ * personnalisé depuis l'admin s'il existe, sinon un modèle par défaut.
+ */
+export async function sendAppointmentEmail(appointmentId: string, kind: AppointmentEmailKind) {
   const supabase = createAdminClient();
 
   const { data: appointment } = await supabase
     .from("appointments")
-    .select(
-      "start_at, client:clients(first_name, email), service:services(name, price)"
-    )
+    .select("start_at, client:clients(first_name, email), service:services(name, price)")
     .eq("id", appointmentId)
     .maybeSingle();
 
@@ -29,24 +35,15 @@ export async function sendConfirmationEmail(appointmentId: string) {
   const variables = {
     prenom: client.first_name,
     prestation: service?.name ?? "",
-    date: startAt.toLocaleDateString("fr-FR", {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-      timeZone: "Europe/Paris",
-    }),
-    heure: startAt.toLocaleTimeString("fr-FR", {
-      hour: "2-digit",
-      minute: "2-digit",
-      timeZone: "Europe/Paris",
-    }),
+    date: formatParisDate(startAt, { weekday: "long", day: "numeric", month: "long" }),
+    heure: formatParisTime(startAt),
     prix: String(service?.price ?? ""),
     adresse: settings.contact_address,
     marque: settings.brand_name,
     politique_annulation: settings.cancellation_policy,
   };
 
-  const template = await getEmailTemplate("confirmation");
+  const template = await getEmailTemplate(kind);
   const subject = renderTemplate(template.subject, variables);
   const body = renderTemplate(template.body, variables);
 
@@ -59,4 +56,9 @@ export async function sendConfirmationEmail(appointmentId: string) {
     status: result.ok ? "sent" : "failed",
     error_message: result.ok ? null : result.error,
   });
+}
+
+/** Conservé pour compatibilité avec le code existant. */
+export async function sendConfirmationEmail(appointmentId: string) {
+  return sendAppointmentEmail(appointmentId, "confirmation");
 }

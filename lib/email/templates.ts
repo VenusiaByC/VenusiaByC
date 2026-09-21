@@ -28,6 +28,31 @@ Adresse : {{adresse}}
 À très vite,
 {{marque}}`,
   },
+  cancellation: {
+    subject: "Ton rendez-vous chez {{marque}} a été annulé",
+    body: `Bonjour {{prenom}},
+
+Ton rendez-vous du {{date}} à {{heure}} ({{prestation}}) a été annulé.
+
+N'hésite pas à reprendre rendez-vous quand tu le souhaites.
+
+{{marque}}`,
+  },
+  reschedule: {
+    subject: "Ton rendez-vous chez {{marque}} a été déplacé",
+    body: `Bonjour {{prenom}},
+
+Ton rendez-vous a été déplacé.
+
+Nouvelle date : {{date}}
+Nouvelle heure : {{heure}}
+Prestation : {{prestation}}
+Prix : {{prix}} €
+Adresse : {{adresse}}
+
+À très vite,
+{{marque}}`,
+  },
 };
 
 export async function getEmailTemplate(name: string): Promise<EmailTemplate> {

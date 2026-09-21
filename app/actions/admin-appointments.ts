@@ -5,6 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { requireAdminUser } from "@/lib/auth";
 import { getAvailableSlots } from "@/lib/availability";
 import { todayISOInBusinessTZ } from "@/lib/timezone";
+import { sendAppointmentEmail } from "@/lib/email/confirmation";
 
 export type AppointmentStatus = "confirmed" | "pending" | "cancelled" | "completed" | "no_show";
 
@@ -48,6 +49,16 @@ export async function setAppointmentStatus(id: string, status: AppointmentStatus
   const supabase = createAdminClient();
   const { error } = await supabase.from("appointments").update({ status }).eq("id", id);
   if (error) return { ok: false as const, error: error.message };
+
+  if (status === "cancelled") {
+    try {
+      await sendAppointmentEmail(id, "cancellation");
+    } catch {
+      // On ne fait jamais échouer l'action à cause d'un souci d'e-mail
+      // (déjà tracé dans notification_log).
+    }
+  }
+
   revalidatePath("/admin/rendez-vous");
   revalidatePath("/admin");
   return { ok: true as const };
@@ -88,6 +99,14 @@ export async function rescheduleAppointment(id: string, newStartAtISO: string) {
     .eq("id", id);
 
   if (error) return { ok: false as const, error: error.message };
+
+  try {
+    await sendAppointmentEmail(id, "reschedule");
+  } catch {
+    // On ne fait jamais échouer l'action à cause d'un souci d'e-mail
+    // (déjà tracé dans notification_log).
+  }
+
   revalidatePath("/admin/rendez-vous");
   revalidatePath("/admin");
   return { ok: true as const };
@@ -170,16 +189,27 @@ export async function createManualAppointment(input: ManualAppointmentInput) {
 
   if (!clientId) return { ok: false as const, error: "Merci de choisir ou créer une cliente." };
 
-  const { error } = await supabase.from("appointments").insert({
-    client_id: clientId,
-    service_id: service.id,
-    start_at: startAt.toISOString(),
-    end_at: endAt.toISOString(),
-    status: "confirmed",
-    notes: input.notes ?? "",
-  });
+  const { data: created, error } = await supabase
+    .from("appointments")
+    .insert({
+      client_id: clientId,
+      service_id: service.id,
+      start_at: startAt.toISOString(),
+      end_at: endAt.toISOString(),
+      status: "confirmed",
+      notes: input.notes ?? "",
+    })
+    .select("id")
+    .single();
 
-  if (error) return { ok: false as const, error: error.message };
+  if (error || !created) return { ok: false as const, error: error?.message ?? "Erreur lors de la création." };
+
+  try {
+    await sendAppointmentEmail(created.id, "confirmation");
+  } catch {
+    // On ne fait jamais échouer l'action à cause d'un souci d'e-mail
+    // (déjà tracé dans notification_log).
+  }
 
   revalidatePath("/admin/rendez-vous");
   revalidatePath("/admin");
