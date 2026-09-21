@@ -7,6 +7,7 @@ import { getAvailableSlots } from "@/lib/availability";
 import { todayISOInBusinessTZ } from "@/lib/timezone";
 import { sendAppointmentEmail } from "@/lib/email/confirmation";
 import { sendAppointmentSms } from "@/lib/sms/notifications";
+import { awardLoyaltyForAppointment } from "@/lib/loyalty";
 
 export type AppointmentStatus = "confirmed" | "pending" | "cancelled" | "completed" | "no_show";
 
@@ -57,6 +58,14 @@ export async function setAppointmentStatus(id: string, status: AppointmentStatus
     } catch {
       // On ne fait jamais échouer l'action à cause d'un souci d'e-mail
       // (déjà tracé dans notification_log).
+    }
+  }
+
+  if (status === "completed") {
+    try {
+      await awardLoyaltyForAppointment(id);
+    } catch {
+      // Jamais bloquant : au pire, un ajustement manuel réparera ça.
     }
   }
 

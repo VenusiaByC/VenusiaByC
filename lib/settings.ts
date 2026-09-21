@@ -34,6 +34,10 @@ export type SiteSettings = {
   contact_address: string;
   instagram_handle: string;
   cancellation_policy: string;
+  loyalty_enabled: string; // "true" | "false" (stocké en texte comme le reste des settings)
+  loyalty_points_per_visit: string;
+  loyalty_reward_threshold: string;
+  loyalty_reward_description: string;
 };
 
 const DEFAULT_SETTINGS: SiteSettings = {
@@ -57,6 +61,10 @@ const DEFAULT_SETTINGS: SiteSettings = {
   contact_address: "",
   instagram_handle: "",
   cancellation_policy: "Annulation possible jusqu'à 24h avant le rendez-vous.",
+  loyalty_enabled: "false",
+  loyalty_points_per_visit: "1",
+  loyalty_reward_threshold: "10",
+  loyalty_reward_description: "10% de réduction sur la prochaine prestation",
 };
 
 export async function getSiteSettings(): Promise<SiteSettings> {

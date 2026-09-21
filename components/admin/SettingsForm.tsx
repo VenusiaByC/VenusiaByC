@@ -162,6 +162,54 @@ export function SettingsForm({ initial }: { initial: SiteSettings }) {
         <p className="mt-1 text-xs text-ink-soft">Ce texte apparaît dans l'e-mail de confirmation.</p>
       </section>
 
+      <section className="mb-12">
+        <h2 className="mb-4 text-lg font-medium">Programme de fidélité</h2>
+        <label className="mb-4 flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={settings.loyalty_enabled === "true"}
+            onChange={(e) => set("loyalty_enabled", e.target.checked ? "true" : "false")}
+          />
+          Activer le programme de fidélité
+        </label>
+        {settings.loyalty_enabled === "true" && (
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="mb-1 block text-sm text-ink-soft">Points gagnés par rendez-vous terminé</label>
+              <input
+                type="number"
+                min="0"
+                value={settings.loyalty_points_per_visit}
+                onChange={(e) => set("loyalty_points_per_visit", e.target.value)}
+                className="w-full rounded-sm border border-line bg-surface px-4 py-2.5"
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm text-ink-soft">Seuil pour la récompense</label>
+              <input
+                type="number"
+                min="1"
+                value={settings.loyalty_reward_threshold}
+                onChange={(e) => set("loyalty_reward_threshold", e.target.value)}
+                className="w-full rounded-sm border border-line bg-surface px-4 py-2.5"
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="mb-1 block text-sm text-ink-soft">Récompense (texte libre)</label>
+              <input
+                value={settings.loyalty_reward_description}
+                onChange={(e) => set("loyalty_reward_description", e.target.value)}
+                className="w-full rounded-sm border border-line bg-surface px-4 py-2.5"
+              />
+            </div>
+          </div>
+        )}
+        <p className="mt-2 text-xs text-ink-soft">
+          Les points sont attribués automatiquement quand tu marques un rendez-vous "Terminé". Visibles et
+          ajustables sur la fiche de chaque cliente.
+        </p>
+      </section>
+
       {error && <p className="mb-4 text-sm text-accent">{error}</p>}
 
       <div className="flex items-center gap-3">

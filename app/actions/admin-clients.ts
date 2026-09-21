@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireAdminUser } from "@/lib/auth";
+import { adjustLoyaltyPoints } from "@/lib/loyalty";
 
 export async function listClients(query?: string) {
   await requireAdminUser();
@@ -84,4 +85,11 @@ export async function deleteClient(id: string) {
   if (error) return { ok: false as const, error: error.message };
   revalidatePath("/admin/clientes");
   return { ok: true as const };
+}
+
+export async function adjustClientLoyaltyPoints(clientId: string, delta: number, reason: string) {
+  await requireAdminUser();
+  const newTotal = await adjustLoyaltyPoints(clientId, delta, reason || "Ajustement manuel");
+  revalidatePath(`/admin/clientes/${clientId}`);
+  return { ok: true as const, newTotal };
 }

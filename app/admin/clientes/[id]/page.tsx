@@ -2,7 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getClientDetail } from "@/app/actions/admin-clients";
 import { ClientForm } from "@/components/admin/ClientForm";
+import { LoyaltyPanel } from "@/components/admin/LoyaltyPanel";
 import { formatParisDate, formatParisTime } from "@/lib/timezone";
+import { getSiteSettings } from "@/lib/settings";
 
 const STATUS_LABELS: Record<string, string> = {
   confirmed: "Confirmé",
@@ -16,6 +18,7 @@ export default async function ClientDetailPage({ params }: { params: { id: strin
   const result = await getClientDetail(params.id);
   if (!result) notFound();
   const { client, appointments } = result;
+  const settings = await getSiteSettings();
 
   const now = Date.now();
   const upcoming = appointments.filter((a: any) => new Date(a.start_at).getTime() >= now);
@@ -31,6 +34,18 @@ export default async function ClientDetailPage({ params }: { params: { id: strin
         <div>
           <h2 className="mb-4 text-lg font-medium">Informations</h2>
           <ClientForm initial={client} />
+
+          {settings.loyalty_enabled === "true" && (
+            <div className="mt-8 max-w-xl">
+              <h2 className="mb-4 text-lg font-medium">Fidélité</h2>
+              <LoyaltyPanel
+                clientId={client.id}
+                initialPoints={client.loyalty_points ?? 0}
+                threshold={parseInt(settings.loyalty_reward_threshold, 10) || 0}
+                rewardDescription={settings.loyalty_reward_description}
+              />
+            </div>
+          )}
         </div>
 
         <div>

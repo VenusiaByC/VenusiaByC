@@ -110,6 +110,16 @@ Puis **Deployments → Redeploy**.
 
 Sur Vercel, va dans l'onglet **"Cron Jobs"** de ton projet (dans le menu du haut) : tu dois voir une ligne `/api/cron/reminders` programmée pour s'exécuter une fois par jour (le plan gratuit de Vercel ne permet qu'une exécution quotidienne, pas toutes les heures — le rappel arrive donc "2 jours avant" à la journée près, pas exactement 48h00 avant). C'est normal qu'elle n'envoie rien tant qu'aucun rendez-vous n'est concerné.
 
+## Nouveau dans cette étape : le programme de fidélité
+
+- Points attribués automatiquement dès qu'un rendez-vous passe au statut "Terminé"
+- Réglable dans **Admin → Paramètres** (activer/désactiver, points par visite, seuil de récompense, texte de la récompense)
+- Visible et ajustable manuellement sur chaque fiche cliente
+
+### Étape base de données
+
+Dans Supabase → SQL Editor → New query, colle et exécute le contenu de `supabase/add-loyalty.sql`.
+
 ## Structure du projet (pour référence)
 
 ```
