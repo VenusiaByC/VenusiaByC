@@ -119,4 +119,4 @@ lib/settings.ts       Charge tous les réglages personnalisables depuis la base
 lib/supabase/         Connexion à la base de données
 supabase/schema.sql   Structure complète de la base de données à installer
 .env.example          Modèle des informations secrètes à renseigner
-``` 
+```
