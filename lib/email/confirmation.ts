@@ -29,8 +29,17 @@ export async function sendConfirmationEmail(appointmentId: string) {
   const variables = {
     prenom: client.first_name,
     prestation: service?.name ?? "",
-    date: startAt.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }),
-    heure: startAt.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
+    date: startAt.toLocaleDateString("fr-FR", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      timeZone: "Europe/Paris",
+    }),
+    heure: startAt.toLocaleTimeString("fr-FR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: "Europe/Paris",
+    }),
     prix: String(service?.price ?? ""),
     adresse: settings.contact_address,
     marque: settings.brand_name,

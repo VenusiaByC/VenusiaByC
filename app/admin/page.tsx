@@ -1,8 +1,9 @@
 import { createAdminClient } from "@/lib/supabase/admin";
+import { todayISOInBusinessTZ, formatParisDate, formatParisTime } from "@/lib/timezone";
 
 async function getDashboardData() {
   const supabase = createAdminClient();
-  const todayISO = new Date().toISOString().slice(0, 10);
+  const todayISO = todayISOInBusinessTZ();
   const todayStart = `${todayISO}T00:00:00`;
   const todayEnd = `${todayISO}T23:59:59`;
 
@@ -69,7 +70,7 @@ export default async function AdminDashboard() {
               {todayAppts.map((a: any) => (
                 <li key={a.id} className="flex items-center justify-between rounded-sm border border-line bg-surface px-4 py-3 text-sm">
                   <span>
-                    {new Date(a.start_at).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })} —{" "}
+                    {formatParisTime(new Date(a.start_at))} —{" "}
                     {a.client?.first_name} {a.client?.last_name}
                   </span>
                   <span className="text-ink-soft">{a.service?.name}</span>
@@ -87,7 +88,7 @@ export default async function AdminDashboard() {
               {upcoming.map((a: any) => (
                 <li key={a.id} className="flex items-center justify-between rounded-sm border border-line bg-surface px-4 py-3 text-sm">
                   <span>
-                    {new Date(a.start_at).toLocaleDateString("fr-FR", { day: "numeric", month: "short" })} —{" "}
+                    {formatParisDate(new Date(a.start_at), { day: "numeric", month: "short" })} —{" "}
                     {a.client?.first_name} {a.client?.last_name}
                   </span>
                   <span className="text-ink-soft">{a.service?.name}</span>

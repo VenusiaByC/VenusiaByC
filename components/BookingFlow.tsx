@@ -79,8 +79,8 @@ export function BookingFlow({ services }: { services: Service[] }) {
         <h2 className="font-serif text-3xl italic text-accent">C'est confirmé !</h2>
         <p className="mt-4 text-ink-soft">
           Ton rendez-vous pour <strong className="text-ink">{selectedService?.name}</strong> le{" "}
-          {new Date(selectedSlot!).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })} à{" "}
-          {new Date(selectedSlot!).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })} est enregistré.
+          {new Date(selectedSlot!).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", timeZone: "Europe/Paris" })} à{" "}
+          {new Date(selectedSlot!).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Paris" })} est enregistré.
         </p>
         <p className="mt-2 text-sm text-ink-soft">
           Un e-mail de confirmation t'arrivera sous peu. À bientôt chez Venusia !
@@ -138,7 +138,7 @@ export function BookingFlow({ services }: { services: Service[] }) {
                     selectedSlot === slot ? "border-accent bg-accent text-white" : "border-line hover:border-ink-soft"
                   }`}
                 >
-                  {new Date(slot).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
+                  {new Date(slot).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Paris" })}
                 </button>
               ))}
             </div>

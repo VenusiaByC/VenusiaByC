@@ -76,6 +76,10 @@ Pour que l'envoi fonctionne, j'ai besoin des informations techniques de ton adre
 
 Dis-moi juste **chez qui est hébergée ton adresse e-mail professionnelle** et je te guide précisément pour récupérer les 4 informations nécessaires (serveur, port, identifiant, mot de passe) et les ajouter dans Vercel.
 
+## Correction : décalage horaire dans les e-mails
+
+Le serveur qui fait tourner le site n'est pas forcément réglé sur l'heure française. J'ai ajouté une variable **TZ=Europe/Paris** : ajoute-la aussi dans Vercel (Settings → Environment Variables → nouvelle variable `TZ` = `Europe/Paris`), puis redéploie. C'est ce qui garantit que les horaires que tu configures, les créneaux proposés et les e-mails affichent tous la même heure, la vraie heure française.
+
 ## Structure du projet (pour référence)
 
 ```
