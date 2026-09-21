@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
+import { parisWallTimeToUtc, getDayOfWeekForDate } from "@/lib/timezone";
 
 /**
  * Moteur de disponibilité.
@@ -21,7 +22,8 @@ type Interval = { start: Date; end: Date };
 
 function toDateTime(dateISO: string, time: string): Date {
   // dateISO: "2026-10-15", time: "09:00:00" ou "09:00"
-  return new Date(`${dateISO}T${time.length === 5 ? time + ":00" : time}`);
+  const normalized = time.length === 5 ? time : time.slice(0, 5);
+  return parisWallTimeToUtc(dateISO, normalized);
 }
 
 function overlaps(a: Interval, b: Interval): boolean {
@@ -62,7 +64,7 @@ async function getWorkingWindows(dateISO: string): Promise<Interval[]> {
   }
 
   // 2. Sinon, horaires habituels du jour de la semaine
-  const dayOfWeek = new Date(`${dateISO}T00:00:00`).getDay();
+  const dayOfWeek = getDayOfWeekForDate(dateISO);
   const { data: hours } = await supabase
     .from("business_hours")
     .select("*")

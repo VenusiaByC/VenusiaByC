@@ -78,7 +78,7 @@ Dis-moi juste **chez qui est hébergée ton adresse e-mail professionnelle** et 
 
 ## Correction : décalage horaire dans les e-mails
 
-Le serveur qui fait tourner le site n'est pas forcément réglé sur l'heure française. J'ai ajouté une variable **TZ=Europe/Paris** : ajoute-la aussi dans Vercel (Settings → Environment Variables → nouvelle variable `TZ` = `Europe/Paris`), puis redéploie. C'est ce qui garantit que les horaires que tu configures, les créneaux proposés et les e-mails affichent tous la même heure, la vraie heure française.
+Vercel ne permet pas de régler le fuseau horaire du serveur via une variable d'environnement (le nom `TZ` est réservé). J'ai donc corrigé ça directement dans le code : tous les calculs d'horaires et d'e-mails utilisent maintenant explicitement le fuseau "Europe/Paris", peu importe le réglage interne du serveur. **Aucune configuration supplémentaire n'est nécessaire de ton côté** pour cette partie — le prochain déploiement suffit.
 
 ## Structure du projet (pour référence)
 
