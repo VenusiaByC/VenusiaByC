@@ -1,9 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { saveWeeklyHours, type DayHours } from "@/app/actions/admin-hours";
-
-const DAY_LABELS = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+import { saveWeeklyHours, type DayHours, DAY_LABELS } from "@/app/actions/admin-hours";
 
 export function HoursEditor({ initial }: { initial: DayHours[] }) {
   const [week, setWeek] = useState<DayHours[]>(initial);

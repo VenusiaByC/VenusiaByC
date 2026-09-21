@@ -59,6 +59,23 @@ Pour que tu puisses vraiment naviguer sur le site (et pas juste lire du code), i
 
 Une fois déployé, Vercel te donne un lien (`venusia.vercel.app` par exemple) : c'est ton site en ligne, utilisable dès maintenant sur téléphone et ordinateur. Envoie-moi ce lien si tu rencontres une erreur, je t'aiderai à la corriger.
 
+## Nouveau dans cette étape
+
+- Un e-mail de confirmation part automatiquement dès qu'une cliente réserve, depuis TON adresse professionnelle (pas une adresse générique)
+- Le contenu de cet e-mail est personnalisable dans **Admin → E-mails**
+
+## Étape à faire de ton côté : renseigner tes identifiants SMTP
+
+Pour que l'envoi fonctionne, j'ai besoin des informations techniques de ton adresse e-mail professionnelle (elles restent uniquement dans les variables d'environnement, jamais dans le code). Ça dépend de qui héberge ton adresse e-mail :
+
+- **Gmail / Google Workspace** : SMTP_HOST = `smtp.gmail.com`, port `587`. Il faudra créer un "mot de passe d'application" (pas ton mot de passe habituel) dans les paramètres de sécurité de ton compte Google.
+- **Outlook / Microsoft 365** : SMTP_HOST = `smtp.office365.com`, port `587`.
+- **OVH** : SMTP_HOST = `ssl0.ovh.net`, port `587` ou `465`.
+- **IONOS** : SMTP_HOST = `smtp.ionos.fr`, port `587`.
+- Autre hébergeur : dis-moi lequel, je te donnerai les valeurs exactes.
+
+Dis-moi juste **chez qui est hébergée ton adresse e-mail professionnelle** et je te guide précisément pour récupérer les 4 informations nécessaires (serveur, port, identifiant, mot de passe) et les ajouter dans Vercel.
+
 ## Structure du projet (pour référence)
 
 ```

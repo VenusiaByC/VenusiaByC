@@ -2,6 +2,7 @@
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getAvailableSlots, isSlotStillAvailable } from "@/lib/availability";
+import { sendConfirmationEmail } from "@/lib/email/confirmation";
 
 export async function getServiceById(serviceId: string) {
   const supabase = createAdminClient();
@@ -114,8 +115,13 @@ export async function createAppointment(
     return { ok: false, error: "Une erreur est survenue lors de la réservation, merci de réessayer." };
   }
 
-  // TODO (prochaine étape) : envoi de l'e-mail + SMS de confirmation ici,
-  // via les modèles définis dans email_templates / sms_templates.
+  // TODO (prochaine étape) : envoi du SMS de confirmation ici, via Brevo.
+  try {
+    await sendConfirmationEmail(appointment.id);
+  } catch {
+    // On ne fait jamais échouer la réservation à cause d'un souci d'e-mail
+    // (déjà tracé dans notification_log par sendConfirmationEmail).
+  }
 
   return { ok: true, appointmentId: appointment.id };
 }

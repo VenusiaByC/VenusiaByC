@@ -7,6 +7,9 @@ import { requireAdminUser } from "@/lib/auth";
 export type HourRange = { start_time: string; end_time: string };
 export type DayHours = { day_of_week: number; is_closed: boolean; ranges: HourRange[] };
 
+const DAY_LABELS = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+export { DAY_LABELS };
+
 export async function getWeeklyHours(): Promise<DayHours[]> {
   await requireAdminUser();
   const supabase = createAdminClient();
