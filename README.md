@@ -80,6 +80,36 @@ Dis-moi juste **chez qui est hébergée ton adresse e-mail professionnelle** et 
 
 Vercel ne permet pas de régler le fuseau horaire du serveur via une variable d'environnement (le nom `TZ` est réservé). J'ai donc corrigé ça directement dans le code : tous les calculs d'horaires et d'e-mails utilisent maintenant explicitement le fuseau "Europe/Paris", peu importe le réglage interne du serveur. **Aucune configuration supplémentaire n'est nécessaire de ton côté** pour cette partie — le prochain déploiement suffit.
 
+## Nouveau dans cette étape : les SMS
+
+- SMS de confirmation envoyé juste après chaque réservation (en ligne ou créée par toi)
+- SMS de rappel envoyé automatiquement 48h avant chaque rendez-vous (vérifié toutes les heures)
+- Contenu personnalisable dans **Admin → SMS**
+
+### Étape base de données
+
+Dans Supabase → SQL Editor → New query, colle et exécute le contenu de `supabase/add-reminder-tracking.sql` (nécessaire pour que le rappel ne parte jamais deux fois).
+
+### Étape Brevo (créer un compte gratuit et récupérer ta clé API)
+
+1. Va sur **https://www.brevo.com**, crée un compte gratuit
+2. Une fois connectée, clique sur ton nom en haut à droite → **"SMTP & API"**
+3. Onglet **"API Keys"** → **"Generate a new API key"** → donne-lui un nom (ex: "Venusia") → copie la clé générée
+4. Recharge un peu de crédit SMS dans **"Billing"** (les tout premiers SMS de test sont parfois offerts, mais il faudra créditer le compte pour un usage réel — quelques euros suffisent pour commencer)
+
+### Étape Vercel
+
+Ajoute ces variables dans **Vercel → Settings → Environment Variables** :
+- `BREVO_API_KEY` = la clé copiée à l'étape précédente
+- `BREVO_SMS_SENDER` = `Venusia` (le nom affiché comme expéditeur du SMS)
+- `CRON_SECRET` = invente une suite de caractères aléatoires (ex: 20 lettres/chiffres au hasard) — ça protège la tâche automatique des rappels contre un déclenchement par une personne extérieure
+
+Puis **Deployments → Redeploy**.
+
+### Vérifier que le rappel automatique est bien activé
+
+Sur Vercel, va dans l'onglet **"Cron Jobs"** de ton projet (dans le menu du haut) : tu dois voir une ligne `/api/cron/reminders` programmée pour s'exécuter toutes les heures. C'est normal qu'elle n'envoie rien tant qu'aucun rendez-vous n'est à 48h près.
+
 ## Structure du projet (pour référence)
 
 ```

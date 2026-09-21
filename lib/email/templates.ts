@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
+export { renderTemplate } from "@/lib/render-template";
 
 /**
  * Modèles d'e-mail. Chaque modèle est identifié par un `name` unique
@@ -69,9 +70,4 @@ export async function getEmailTemplate(name: string): Promise<EmailTemplate> {
     // on retombe sur le modèle par défaut ci-dessous
   }
   return DEFAULTS[name] ?? { subject: "", body: "" };
-}
-
-/** Remplace les {{variables}} par leurs valeurs dans un texte. */
-export function renderTemplate(text: string, variables: Record<string, string>): string {
-  return text.replace(/{{\s*(\w+)\s*}}/g, (_, key) => variables[key] ?? "");
 }

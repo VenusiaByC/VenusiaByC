@@ -6,6 +6,7 @@ import { requireAdminUser } from "@/lib/auth";
 import { getAvailableSlots } from "@/lib/availability";
 import { todayISOInBusinessTZ } from "@/lib/timezone";
 import { sendAppointmentEmail } from "@/lib/email/confirmation";
+import { sendAppointmentSms } from "@/lib/sms/notifications";
 
 export type AppointmentStatus = "confirmed" | "pending" | "cancelled" | "completed" | "no_show";
 
@@ -209,6 +210,11 @@ export async function createManualAppointment(input: ManualAppointmentInput) {
   } catch {
     // On ne fait jamais échouer l'action à cause d'un souci d'e-mail
     // (déjà tracé dans notification_log).
+  }
+  try {
+    await sendAppointmentSms(created.id, "confirmation");
+  } catch {
+    // Idem pour le SMS.
   }
 
   revalidatePath("/admin/rendez-vous");
