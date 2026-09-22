@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireAdminUser } from "@/lib/auth";
 import { getSiteSettings, type SiteSettings } from "@/lib/settings";
+import { regenerateIcsToken } from "@/lib/ics-token";
 
 export async function getSettingsAdmin(): Promise<SiteSettings> {
   await requireAdminUser();
@@ -26,4 +27,11 @@ export async function saveSettings(settings: SiteSettings) {
   revalidatePath("/reserver");
   revalidatePath("/admin/parametres");
   return { ok: true as const };
+}
+
+export async function regenerateCalendarToken() {
+  await requireAdminUser();
+  const token = await regenerateIcsToken();
+  revalidatePath("/admin/parametres");
+  return { ok: true as const, token };
 }

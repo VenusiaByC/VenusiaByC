@@ -120,6 +120,20 @@ Sur Vercel, va dans l'onglet **"Cron Jobs"** de ton projet (dans le menu du haut
 
 Dans Supabase → SQL Editor → New query, colle et exécute le contenu de `supabase/add-loyalty.sql`.
 
+## Nouveau dans cette étape : la synchronisation Apple Calendar
+
+- Un lien privé (dans **Admin → Paramètres**, tout en bas) à ajouter une seule fois dans l'app Calendrier
+- Tous tes rendez-vous confirmés à venir apparaissent automatiquement, mis à jour environ toutes les heures par Apple
+- Aucun mot de passe Apple/iCloud n'est jamais demandé ni stocké
+
+### Comment t'abonner (à faire une seule fois, sur chaque appareil)
+
+**Sur iPhone/iPad** : ouvre `Admin → Paramètres` dans Safari (pas Chrome, ça ne fonctionne qu'avec Safari pour ce type de lien), clique sur "Ouvrir directement sur cet appareil" → iOS propose d'ajouter un calendrier abonné → confirme.
+
+**Sur Mac** : même chose depuis Safari, ou copie le lien et colle-le dans l'app Calendrier via `Fichier → Nouvel abonnement au calendrier`.
+
+Aucune étape de configuration technique de ton côté (pas de nouvelle variable, pas de SQL à exécuter).
+
 ## Structure du projet (pour référence)
 
 ```
