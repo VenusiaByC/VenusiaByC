@@ -54,6 +54,21 @@ Adresse : {{adresse}}
 À très vite,
 {{marque}}`,
   },
+  admin_notification: {
+    subject: "Nouvelle réservation : {{prenom}} {{nom}} — {{date}} à {{heure}}",
+    body: `Nouvelle réservation en ligne !
+
+Cliente : {{prenom}} {{nom}}
+Téléphone : {{telephone}}
+E-mail : {{email}}
+
+Prestation : {{prestation}}
+Date : {{date}}
+Heure : {{heure}}
+Prix : {{prix}} €
+
+Le rendez-vous est déjà enregistré dans l'admin, section Rendez-vous.`,
+  },
 };
 
 export async function getEmailTemplate(name: string): Promise<EmailTemplate> {

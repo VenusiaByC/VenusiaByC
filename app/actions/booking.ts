@@ -2,7 +2,7 @@
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getAvailableSlots, isSlotStillAvailable } from "@/lib/availability";
-import { sendConfirmationEmail } from "@/lib/email/confirmation";
+import { sendConfirmationEmail, sendAdminNotification } from "@/lib/email/confirmation";
 import { sendAppointmentSms } from "@/lib/sms/notifications";
 
 export async function getServiceById(serviceId: string) {
@@ -127,6 +127,11 @@ export async function createAppointment(
     await sendAppointmentSms(appointment.id, "confirmation");
   } catch {
     // Idem pour le SMS : jamais bloquant.
+  }
+  try {
+    await sendAdminNotification(appointment.id);
+  } catch {
+    // Jamais bloquant non plus.
   }
 
   return { ok: true, appointmentId: appointment.id };

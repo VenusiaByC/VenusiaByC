@@ -38,6 +38,7 @@ export type SiteSettings = {
   loyalty_points_per_visit: string;
   loyalty_reward_threshold: string;
   loyalty_reward_description: string;
+  owner_notification_email: string;
 };
 
 const DEFAULT_SETTINGS: SiteSettings = {
@@ -65,6 +66,7 @@ const DEFAULT_SETTINGS: SiteSettings = {
   loyalty_points_per_visit: "1",
   loyalty_reward_threshold: "10",
   loyalty_reward_description: "10% de réduction sur la prochaine prestation",
+  owner_notification_email: "",
 };
 
 export async function getSiteSettings(): Promise<SiteSettings> {

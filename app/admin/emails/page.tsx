@@ -5,6 +5,7 @@ const TEMPLATES = [
   { name: "confirmation", label: "Confirmation de réservation", desc: "Envoyé dès qu'une cliente réserve (ou que tu crées un rendez-vous manuellement)." },
   { name: "cancellation", label: "Annulation", desc: "Envoyé quand un rendez-vous est annulé." },
   { name: "reschedule", label: "Déplacement", desc: "Envoyé quand un rendez-vous est déplacé vers un autre créneau." },
+  { name: "admin_notification", label: "Notification pour toi", desc: "Envoyé à TOI (voir Paramètres pour l'adresse) dès qu'une cliente réserve en ligne." },
 ];
 
 export default async function EmailsPage() {

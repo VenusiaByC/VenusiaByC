@@ -163,6 +163,22 @@ export function SettingsForm({ initial }: { initial: SiteSettings }) {
       </section>
 
       <section className="mb-12">
+        <h2 className="mb-4 text-lg font-medium">Notifications</h2>
+        <div>
+          <label className="mb-1 block text-sm text-ink-soft">
+            T'envoyer un e-mail à chaque nouvelle réservation, à cette adresse :
+          </label>
+          <input
+            type="email"
+            value={settings.owner_notification_email}
+            onChange={(e) => set("owner_notification_email", e.target.value)}
+            placeholder="Laisse vide pour utiliser ton adresse SMTP configurée"
+            className="w-full max-w-sm rounded-sm border border-line bg-surface px-4 py-2.5"
+          />
+        </div>
+      </section>
+
+      <section className="mb-12">
         <h2 className="mb-4 text-lg font-medium">Programme de fidélité</h2>
         <label className="mb-4 flex items-center gap-2 text-sm">
           <input
