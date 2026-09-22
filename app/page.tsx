@@ -29,6 +29,8 @@ async function getGalleryPreview() {
     return [];
   }
 }
+
+async function getOpenHoursSummary() {
   try {
     const supabase = createClient();
     const { data } = await supabase
