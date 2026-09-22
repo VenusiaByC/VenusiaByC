@@ -75,3 +75,10 @@ export function addDaysToISO(dateISO: string, days: number): string {
   date.setUTCDate(date.getUTCDate() + days);
   return date.toISOString().slice(0, 10);
 }
+
+/** Le lundi de la semaine contenant cette date (semaine française). */
+export function getMondayOfWeek(dateISO: string): string {
+  const dow = getDayOfWeekForDate(dateISO); // 0 = dimanche ... 6 = samedi
+  const offset = dow === 0 ? -6 : 1 - dow;
+  return addDaysToISO(dateISO, offset);
+}

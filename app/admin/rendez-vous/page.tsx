@@ -37,6 +37,12 @@ export default async function RendezVousPage({
         </Link>
       </div>
 
+      <div className="mb-4">
+        <Link href="/admin/calendrier" className="text-sm text-ink-soft underline">
+          Voir en calendrier →
+        </Link>
+      </div>
+
       <form className="mb-6 flex items-center gap-3">
         <label className="text-sm text-ink-soft">Filtrer par date :</label>
         <input

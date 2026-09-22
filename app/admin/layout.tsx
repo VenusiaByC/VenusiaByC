@@ -3,6 +3,7 @@ import Link from "next/link";
 const NAV_ITEMS = [
   { href: "/admin", label: "Tableau de bord", icon: "🏠" },
   { href: "/admin/rendez-vous", label: "Rendez-vous", icon: "📅" },
+  { href: "/admin/calendrier", label: "Calendrier", icon: "🗓️" },
   { href: "/admin/clientes", label: "Clientes", icon: "👩" },
   { href: "/admin/prestations", label: "Prestations", icon: "💅" },
   { href: "/admin/horaires", label: "Horaires", icon: "🕐" },
