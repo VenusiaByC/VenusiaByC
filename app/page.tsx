@@ -90,12 +90,17 @@ export default async function HomePage() {
             <a href="/carte-cadeau" className="hover:text-ink">Carte cadeau</a>
             <a href="#contact" className="hover:text-ink">Contact</a>
           </nav>
-          <a
-            href="/reserver"
-            className="rounded-sm bg-accent px-5 py-2.5 text-sm font-medium text-white transition hover:bg-accent-dark"
-          >
-            Réserver
-          </a>
+          <div className="flex items-center gap-3">
+            <a href="/carte-cadeau" className="inline text-sm text-ink-soft hover:text-ink md:hidden">
+              🎁 Carte cadeau
+            </a>
+            <a
+              href="/reserver"
+              className="rounded-sm bg-accent px-5 py-2.5 text-sm font-medium text-white transition hover:bg-accent-dark"
+            >
+              Réserver
+            </a>
+          </div>
         </div>
       </header>
 
@@ -224,6 +229,9 @@ export default async function HomePage() {
             <p className="text-sm text-bg/70">
               Un rendez-vous rapide, un moment pour vous.
             </p>
+            <a href="/carte-cadeau" className="mt-3 inline-block text-sm underline text-bg/80 hover:text-bg">
+              🎁 Offrir une carte cadeau
+            </a>
           </div>
           <div>
             <h3 className="mb-3 text-base font-medium">Horaires</h3>
