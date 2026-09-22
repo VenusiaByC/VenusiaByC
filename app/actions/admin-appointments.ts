@@ -39,7 +39,7 @@ export async function getAppointmentDetail(id: string) {
   const { data } = await supabase
     .from("appointments")
     .select(
-      "id, start_at, end_at, status, notes, client:clients(id, first_name, last_name, phone, email, internal_notes), service:services(id, name, price, duration_minutes, buffer_minutes)"
+      "id, start_at, end_at, status, notes, payment_status, paid_amount, client:clients(id, first_name, last_name, phone, email, internal_notes), service:services(id, name, price, duration_minutes, buffer_minutes)"
     )
     .eq("id", id)
     .maybeSingle();

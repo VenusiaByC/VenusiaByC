@@ -188,6 +188,16 @@ export function SettingsForm({ initial }: { initial: SiteSettings }) {
               className="w-full rounded-sm border border-line bg-surface px-4 py-2.5"
             />
           </div>
+          <div className="sm:col-span-2">
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={settings.payments_enabled === "true"}
+                onChange={(e) => set("payments_enabled", e.target.checked ? "true" : "false")}
+              />
+              Proposer le paiement en ligne à la réservation (nécessite Stripe configuré)
+            </label>
+          </div>
         </div>
       </section>
 

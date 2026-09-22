@@ -41,6 +41,7 @@ export type SiteSettings = {
   owner_notification_email: string;
   site_url: string;
   min_cancellation_hours: string;
+  payments_enabled: string;
 };
 
 const DEFAULT_SETTINGS: SiteSettings = {
@@ -71,6 +72,7 @@ const DEFAULT_SETTINGS: SiteSettings = {
   owner_notification_email: "",
   site_url: "",
   min_cancellation_hours: "24",
+  payments_enabled: "false",
 };
 
 export async function getSiteSettings(): Promise<SiteSettings> {

@@ -19,7 +19,7 @@ export default async function ReserverPage() {
             Les réservations ouvriront dès que les prestations seront configurées.
           </p>
         ) : (
-          <BookingFlow services={services} />
+          <BookingFlow services={services} paymentsEnabled={settings.payments_enabled === "true"} />
         )}
       </div>
     </main>

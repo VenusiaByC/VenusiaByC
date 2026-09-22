@@ -147,6 +147,49 @@ Dans Supabase → SQL Editor, exécute `supabase/add-manage-token.sql`.
 
 Dans **Admin → Paramètres → Réservation**, renseigne le champ **"Adresse du site"** avec ton URL Vercel actuelle (ex : `https://venusia-by-c.vercel.app`) — sans ça, le lien dans l'e-mail ne pourra pas se construire correctement.
 
+## Nouveau dans cette étape : paiement en ligne + cartes cadeaux (Stripe)
+
+- À la réservation, la cliente peut choisir **"Payer sur place"** ou **"Payer en ligne maintenant"**
+- Nouvelle page publique **`/carte-cadeau`** : achat d'une carte cadeau numérique (montant libre), envoyée par e-mail avec un code
+- Ce code peut être utilisé lors d'une réservation en ligne (déduit automatiquement), ou en personne (déduit manuellement dans **Admin → Cartes cadeaux**)
+
+### Étape base de données
+
+Dans Supabase → SQL Editor, exécute `supabase/add-payments.sql`.
+
+### Étape Stripe (compte gratuit, commissions uniquement sur les paiements réussis)
+
+1. Va sur **https://stripe.com**, crée un compte
+2. Une fois connectée, reste en **mode Test** pour l'instant (interrupteur en haut à droite du tableau de bord Stripe) — ça permet de tout tester sans vrai argent
+3. Menu de gauche → **"Développeurs"** → **"Clés API"**
+4. Copie la **"Clé secrète"** (commence par `sk_test_...`)
+
+### Étape Vercel
+
+Ajoute dans **Vercel → Settings → Environment Variables** :
+- `STRIPE_SECRET_KEY` = la clé copiée à l'étape précédente
+
+Puis **Deployments → Redeploy**.
+
+### Configurer le webhook (indispensable pour que les paiements se confirment automatiquement)
+
+1. Dans Stripe, menu de gauche → **"Développeurs"** → **"Webhooks"** → **"Ajouter un point de terminaison"**
+2. URL du point de terminaison : `https://TON-SITE.vercel.app/api/stripe/webhook` (remplace par ta vraie URL)
+3. Événements à écouter : coche **`checkout.session.completed`**
+4. Clique "Ajouter le point de terminaison"
+5. Une fois créé, clique dessus et copie la **"Clé secrète de signature"** (commence par `whsec_...`)
+6. Ajoute-la dans Vercel : `STRIPE_WEBHOOK_SECRET` = cette valeur, puis redéploie
+
+### Activer et tester
+
+1. Dans **Admin → Paramètres → Réservation**, coche **"Proposer le paiement en ligne à la réservation"**
+2. Teste une réservation avec paiement en ligne : en mode Test Stripe, utilise le numéro de carte **4242 4242 4242 4242**, une date future, et n'importe quel CVC — c'est une carte de test, aucun vrai argent n'est débité
+3. Vérifie que le rendez-vous passe bien en "Payé en ligne" dans l'admin
+
+### Passer en argent réel (quand tu es prête)
+
+Dans Stripe, bascule l'interrupteur "Mode Test" → "Mode Live" (il faudra renseigner tes coordonnées bancaires une fois), puis répète les étapes "Clé API" et "Webhook" en mode Live, et remplace les valeurs dans Vercel par les nouvelles clés (`sk_live_...` et le nouveau `whsec_...`).
+
 ## Structure du projet (pour référence)
 
 ```

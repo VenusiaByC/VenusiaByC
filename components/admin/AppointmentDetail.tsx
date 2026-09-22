@@ -23,6 +23,8 @@ type Appointment = {
   start_at: string;
   status: AppointmentStatus;
   notes: string;
+  payment_status?: string;
+  paid_amount?: number | null;
   client: { id: string; first_name: string; last_name: string; phone: string | null; email: string | null; internal_notes: string } | null;
   service: { id: string; name: string; price: number; duration_minutes: number } | null;
 };
@@ -94,6 +96,16 @@ export function AppointmentDetail({ appointment }: { appointment: Appointment })
           <div>
             <div className="text-ink-soft">Heure</div>
             <div className="font-medium">{formatParisTime(new Date(appointment.start_at))}</div>
+          </div>
+          <div>
+            <div className="text-ink-soft">Paiement</div>
+            <div className="font-medium">
+              {appointment.payment_status === "paid"
+                ? `Payé en ligne${appointment.paid_amount ? ` (${appointment.paid_amount} €)` : ""}`
+                : appointment.payment_status === "pending"
+                ? "Paiement en attente"
+                : "À régler sur place"}
+            </div>
           </div>
         </div>
 

@@ -71,6 +71,21 @@ Prix : {{prix}} €
 
 Le rendez-vous est déjà enregistré dans l'admin, section Rendez-vous.`,
   },
+  gift_card_delivery: {
+    subject: "Ta carte cadeau {{marque}} — {{montant}} €",
+    body: `Bonjour {{prenom}},
+
+Voici ta carte cadeau {{marque}} d'une valeur de {{montant}} € !
+
+Code : {{code}}
+
+{{message}}
+
+À utiliser en une ou plusieurs fois, lors d'une réservation ou directement en institut.
+
+À très vite,
+{{marque}}`,
+  },
 };
 
 export async function getEmailTemplate(name: string): Promise<EmailTemplate> {

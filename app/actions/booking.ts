@@ -41,6 +41,7 @@ export type CreateAppointmentInput = {
   lastName: string;
   email: string;
   phone: string;
+  notes?: string;
 };
 
 export type CreateAppointmentResult =
@@ -108,6 +109,7 @@ export async function createAppointment(
       start_at: startAt.toISOString(),
       end_at: endAt.toISOString(),
       status: "confirmed",
+      notes: input.notes ?? "",
     })
     .select("id")
     .single();

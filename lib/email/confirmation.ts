@@ -114,3 +114,35 @@ export async function sendAdminNotification(appointmentId: string) {
     error_message: result.ok ? null : result.error,
   });
 }
+
+/** Envoie le code de la carte cadeau à l'acheteuse (et à la destinataire si
+ * différente et renseignée). */
+export async function sendGiftCardEmail(giftCardId: string) {
+  const supabase = createAdminClient();
+  const { data: giftCard } = await supabase.from("gift_cards").select("*").eq("id", giftCardId).maybeSingle();
+  if (!giftCard) return;
+
+  const settings = await getSiteSettings();
+  const variables = {
+    prenom: giftCard.buyer_name,
+    montant: String(giftCard.initial_amount),
+    code: giftCard.code,
+    message: giftCard.message || "",
+    marque: settings.brand_name,
+  };
+
+  const template = await getEmailTemplate("gift_card_delivery");
+  const subject = renderTemplate(template.subject, variables);
+  const body = renderTemplate(template.body, variables);
+
+  const recipients = new Set([giftCard.buyer_email, giftCard.recipient_email].filter(Boolean));
+  for (const recipient of recipients) {
+    const result = await sendEmail({ to: recipient, subject, text: body });
+    await supabase.from("notification_log").insert({
+      channel: "email",
+      recipient,
+      status: result.ok ? "sent" : "failed",
+      error_message: result.ok ? null : result.error,
+    });
+  }
+}

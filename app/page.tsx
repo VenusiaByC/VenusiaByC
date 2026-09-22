@@ -87,6 +87,7 @@ export default async function HomePage() {
           <nav className="hidden gap-9 text-sm text-ink-soft md:flex">
             <a href="#prestations" className="hover:text-ink">Prestations</a>
             <a href="/galerie" className="hover:text-ink">Galerie</a>
+            <a href="/carte-cadeau" className="hover:text-ink">Carte cadeau</a>
             <a href="#contact" className="hover:text-ink">Contact</a>
           </nav>
           <a

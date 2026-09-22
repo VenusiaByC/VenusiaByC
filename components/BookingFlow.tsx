@@ -2,6 +2,8 @@
 
 import { useState, useTransition } from "react";
 import { getSlotsForDate, createAppointment } from "@/app/actions/booking";
+import { createAppointmentCheckout } from "@/app/actions/payments";
+import { validateGiftCardCode } from "@/app/actions/payments";
 import { formatDuration } from "@/lib/format";
 
 type Service = {
@@ -13,7 +15,7 @@ type Service = {
   category: string;
 };
 
-export function BookingFlow({ services }: { services: Service[] }) {
+export function BookingFlow({ services, paymentsEnabled }: { services: Service[]; paymentsEnabled: boolean }) {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [dateISO, setDateISO] = useState("");
@@ -22,8 +24,11 @@ export function BookingFlow({ services }: { services: Service[] }) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [confirmedId, setConfirmedId] = useState<string | null>(null);
+  const [fullyCoveredByGiftCard, setFullyCoveredByGiftCard] = useState(false);
 
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", phone: "" });
+  const [giftCardCode, setGiftCardCode] = useState("");
+  const [giftCardStatus, setGiftCardStatus] = useState<{ valid: boolean; message: string } | null>(null);
 
   function pickService(service: Service) {
     setSelectedService(service);
@@ -50,7 +55,20 @@ export function BookingFlow({ services }: { services: Service[] }) {
     setStep(3);
   }
 
-  function submit() {
+  async function checkGiftCard() {
+    if (!giftCardCode.trim()) {
+      setGiftCardStatus(null);
+      return;
+    }
+    const result = await validateGiftCardCode(giftCardCode);
+    setGiftCardStatus(
+      result.valid
+        ? { valid: true, message: `Carte valide — solde : ${result.remaining} €` }
+        : { valid: false, message: result.error }
+    );
+  }
+
+  function submit(payOnline: boolean) {
     if (!selectedService || !selectedSlot || !dateISO) return;
     setError(null);
     startTransition(async () => {
@@ -62,13 +80,38 @@ export function BookingFlow({ services }: { services: Service[] }) {
         lastName: form.lastName,
         email: form.email,
         phone: form.phone,
+        notes:
+          !payOnline && giftCardCode && giftCardStatus?.valid
+            ? `Carte cadeau à honorer en personne : ${giftCardCode.trim().toUpperCase()}`
+            : "",
       });
-      if (result.ok) {
+
+      if (!result.ok) {
+        setError(result.error);
+        return;
+      }
+
+      if (!payOnline) {
         setConfirmedId(result.appointmentId);
         setStep(4);
-      } else {
-        setError(result.error);
+        return;
       }
+
+      const checkout = await createAppointmentCheckout(
+        result.appointmentId,
+        giftCardStatus?.valid ? giftCardCode : undefined
+      );
+      if (!checkout.ok) {
+        setError(checkout.error);
+        return;
+      }
+      if (checkout.fullyCovered) {
+        setConfirmedId(result.appointmentId);
+        setFullyCoveredByGiftCard(true);
+        setStep(4);
+        return;
+      }
+      window.location.href = checkout.url;
     });
   }
 
@@ -83,6 +126,9 @@ export function BookingFlow({ services }: { services: Service[] }) {
           {new Date(selectedSlot!).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", timeZone: "Europe/Paris" })} à{" "}
           {new Date(selectedSlot!).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Paris" })} est enregistré.
         </p>
+        {fullyCoveredByGiftCard && (
+          <p className="mt-2 text-sm text-accent">Entièrement réglé par ta carte cadeau — rien à payer sur place.</p>
+        )}
         <p className="mt-2 text-sm text-ink-soft">
           Un e-mail de confirmation t'arrivera sous peu. À bientôt chez Venusia !
         </p>
@@ -147,7 +193,7 @@ export function BookingFlow({ services }: { services: Service[] }) {
         </div>
       )}
 
-      {/* Étape 3 : informations + confirmation */}
+      {/* Étape 3 : informations + paiement */}
       {step >= 3 && selectedSlot && (
         <div className="mb-10">
           <h2 className="mb-4 font-serif text-2xl italic">3. Tes coordonnées</h2>
@@ -179,14 +225,46 @@ export function BookingFlow({ services }: { services: Service[] }) {
               className="rounded-sm border border-line bg-surface px-4 py-3"
             />
           </div>
+
+          <div className="mt-4">
+            <div className="flex gap-2">
+              <input
+                placeholder="Code carte cadeau (optionnel)"
+                value={giftCardCode}
+                onChange={(e) => { setGiftCardCode(e.target.value); setGiftCardStatus(null); }}
+                className="flex-1 rounded-sm border border-line bg-surface px-4 py-2.5 text-sm uppercase"
+              />
+              <button onClick={checkGiftCard} className="rounded-sm border border-line px-4 py-2.5 text-sm">
+                Vérifier
+              </button>
+            </div>
+            {giftCardStatus && (
+              <p className={`mt-1 text-sm ${giftCardStatus.valid ? "text-accent" : "text-ink-soft"}`}>
+                {giftCardStatus.message}
+              </p>
+            )}
+          </div>
+
           {error && <p className="mt-3 text-sm text-accent">{error}</p>}
-          <button
-            onClick={submit}
-            disabled={isPending || !form.firstName || !form.lastName || (!form.email && !form.phone)}
-            className="mt-5 rounded-sm bg-accent px-8 py-3.5 text-sm font-medium text-white transition hover:bg-accent-dark disabled:opacity-50"
-          >
-            {isPending ? "Confirmation en cours…" : "Confirmer le rendez-vous"}
-          </button>
+
+          <div className="mt-5 flex flex-wrap gap-3">
+            <button
+              onClick={() => submit(false)}
+              disabled={isPending || !form.firstName || !form.lastName || (!form.email && !form.phone)}
+              className="rounded-sm border border-line px-8 py-3.5 text-sm font-medium transition hover:border-ink-soft disabled:opacity-50"
+            >
+              {isPending ? "…" : "Payer sur place"}
+            </button>
+            {paymentsEnabled && (
+              <button
+                onClick={() => submit(true)}
+                disabled={isPending || !form.firstName || !form.lastName || (!form.email && !form.phone)}
+                className="rounded-sm bg-accent px-8 py-3.5 text-sm font-medium text-white transition hover:bg-accent-dark disabled:opacity-50"
+              >
+                {isPending ? "…" : "Payer en ligne maintenant"}
+              </button>
+            )}
+          </div>
         </div>
       )}
     </div>
