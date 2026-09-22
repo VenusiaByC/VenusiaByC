@@ -20,6 +20,21 @@ async function getFeaturedServices() {
   }
 }
 
+async function getPublishedReviews() {
+  try {
+    const supabase = createClient();
+    const { data } = await supabase
+      .from("reviews")
+      .select("id, author_name, rating, comment")
+      .eq("published", true)
+      .order("created_at", { ascending: false })
+      .limit(6);
+    return data ?? [];
+  } catch {
+    return [];
+  }
+}
+
 async function getGalleryPreview() {
   try {
     const supabase = createClient();
@@ -56,11 +71,12 @@ async function getOpenHoursSummary() {
 }
 
 export default async function HomePage() {
-  const [settings, services, hours, galleryPreview] = await Promise.all([
+  const [settings, services, hours, galleryPreview, reviews] = await Promise.all([
     getSiteSettings(),
     getFeaturedServices(),
     getOpenHoursSummary(),
     getGalleryPreview(),
+    getPublishedReviews(),
   ]);
 
   return (
@@ -177,6 +193,23 @@ export default async function HomePage() {
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               {galleryPreview.map((p) => (
                 <img key={p.id} src={p.image_url} alt={p.caption ?? ""} className="aspect-square w-full rounded-sm object-cover" />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {reviews.length > 0 && (
+        <section className="bg-blush px-7 py-20">
+          <div className="mx-auto max-w-6xl">
+            <h2 className="mb-10 font-serif text-3xl md:text-4xl">Elles en parlent</h2>
+            <div className="grid gap-6 sm:grid-cols-3">
+              {reviews.slice(0, 3).map((r) => (
+                <div key={r.id} className="rounded-sm bg-surface p-6">
+                  <div className="mb-3 text-gold">{"★".repeat(r.rating)}{"☆".repeat(5 - r.rating)}</div>
+                  {r.comment && <p className="mb-3 text-sm text-ink-soft">"{r.comment}"</p>}
+                  <p className="text-sm font-medium">{r.author_name}</p>
+                </div>
               ))}
             </div>
           </div>

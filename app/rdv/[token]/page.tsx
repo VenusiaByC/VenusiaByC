@@ -3,6 +3,7 @@ import { getSelfServiceAppointment } from "@/app/actions/self-service";
 import { getSiteSettings } from "@/lib/settings";
 import { Logo } from "@/components/Logo";
 import { SelfServicePanel } from "@/components/SelfServicePanel";
+import { ReviewForm } from "@/components/ReviewForm";
 
 export default async function ManageAppointmentPage({ params }: { params: { token: string } }) {
   const [result, settings] = await Promise.all([
@@ -27,6 +28,9 @@ export default async function ManageAppointmentPage({ params }: { params: { toke
           canManage={result.canManage}
           minHours={result.minHours}
         />
+        {result.appointment.status === "completed" && !result.hasReview && (
+          <ReviewForm token={params.token} />
+        )}
       </div>
     </main>
   );

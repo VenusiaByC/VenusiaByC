@@ -15,7 +15,7 @@ async function loadAppointmentByToken(token: string) {
   const { data } = await supabase
     .from("appointments")
     .select(
-      "id, start_at, end_at, status, client_id, service:services(id, name, price, duration_minutes, buffer_minutes)"
+      "id, start_at, end_at, status, client_id, client:clients(first_name, last_name), service:services(id, name, price, duration_minutes, buffer_minutes)"
     )
     .eq("manage_token", token)
     .maybeSingle();
@@ -34,7 +34,48 @@ export async function getSelfServiceAppointment(token: string) {
     appointment.status !== "completed" &&
     Date.now() < deadline;
 
-  return { appointment, canManage, minHours };
+  let hasReview = false;
+  if (appointment.status === "completed") {
+    const supabase = createAdminClient();
+    const { data: review } = await supabase
+      .from("reviews")
+      .select("id")
+      .eq("appointment_id", appointment.id)
+      .maybeSingle();
+    hasReview = !!review;
+  }
+
+  return { appointment, canManage, minHours, hasReview };
+}
+
+export async function submitReview(token: string, rating: number, comment: string) {
+  const appointment = await loadAppointmentByToken(token);
+  if (!appointment) return { ok: false as const, error: "Rendez-vous introuvable." };
+  if (appointment.status !== "completed") {
+    return { ok: false as const, error: "L'avis n'est disponible qu'après le rendez-vous." };
+  }
+
+  const clampedRating = Math.min(5, Math.max(1, Math.round(rating)));
+  const client = (appointment as any).client;
+  const authorName = client ? `${client.first_name} ${client.last_name?.[0] ?? ""}.` : "Cliente";
+
+  const supabase = createAdminClient();
+  const { error } = await supabase.from("reviews").insert({
+    client_id: appointment.client_id,
+    appointment_id: appointment.id,
+    author_name: authorName,
+    rating: clampedRating,
+    comment,
+  });
+
+  if (error) {
+    if (error.code === "23505") {
+      return { ok: false as const, error: "Un avis a déjà été laissé pour ce rendez-vous." };
+    }
+    return { ok: false as const, error: error.message };
+  }
+
+  return { ok: true as const };
 }
 
 export async function selfCancelAppointment(token: string) {
