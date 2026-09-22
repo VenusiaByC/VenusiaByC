@@ -163,6 +163,35 @@ export function SettingsForm({ initial }: { initial: SiteSettings }) {
       </section>
 
       <section className="mb-12">
+        <h2 className="mb-4 text-lg font-medium">Réservation</h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label className="mb-1 block text-sm text-ink-soft">
+              Adresse du site (pour les liens dans les e-mails)
+            </label>
+            <input
+              value={settings.site_url}
+              onChange={(e) => set("site_url", e.target.value)}
+              placeholder="https://venusia-by-c.vercel.app"
+              className="w-full rounded-sm border border-line bg-surface px-4 py-2.5"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm text-ink-soft">
+              Délai minimum pour annuler/modifier en ligne (heures)
+            </label>
+            <input
+              type="number"
+              min="0"
+              value={settings.min_cancellation_hours}
+              onChange={(e) => set("min_cancellation_hours", e.target.value)}
+              className="w-full rounded-sm border border-line bg-surface px-4 py-2.5"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section className="mb-12">
         <h2 className="mb-4 text-lg font-medium">Notifications</h2>
         <div>
           <label className="mb-1 block text-sm text-ink-soft">

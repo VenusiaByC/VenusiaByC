@@ -26,6 +26,8 @@ Adresse : {{adresse}}
 
 {{politique_annulation}}
 
+Besoin d'annuler ou de changer l'heure ? {{lien_gestion}}
+
 À très vite,
 {{marque}}`,
   },

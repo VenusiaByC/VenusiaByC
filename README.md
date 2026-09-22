@@ -134,6 +134,19 @@ Dans Supabase → SQL Editor → New query, colle et exécute le contenu de `sup
 
 Aucune étape de configuration technique de ton côté (pas de nouvelle variable, pas de SQL à exécuter).
 
+## Nouveau dans cette étape : auto-annulation/modification par la cliente
+
+- Chaque e-mail de confirmation inclut désormais un lien privé permettant à la cliente d'annuler ou de déplacer elle-même son rendez-vous
+- Réglable dans **Admin → Paramètres → Réservation** : délai minimum avant lequel ce n'est plus possible en ligne (par défaut 24h)
+
+### Étape base de données
+
+Dans Supabase → SQL Editor, exécute `supabase/add-manage-token.sql`.
+
+### Étape à faire de ton côté
+
+Dans **Admin → Paramètres → Réservation**, renseigne le champ **"Adresse du site"** avec ton URL Vercel actuelle (ex : `https://venusia-by-c.vercel.app`) — sans ça, le lien dans l'e-mail ne pourra pas se construire correctement.
+
 ## Structure du projet (pour référence)
 
 ```

@@ -16,7 +16,7 @@ export async function sendAppointmentEmail(appointmentId: string, kind: Appointm
 
   const { data: appointment } = await supabase
     .from("appointments")
-    .select("start_at, client:clients(first_name, email), service:services(name, price)")
+    .select("start_at, manage_token, client:clients(first_name, email), service:services(name, price)")
     .eq("id", appointmentId)
     .maybeSingle();
 
@@ -41,6 +41,7 @@ export async function sendAppointmentEmail(appointmentId: string, kind: Appointm
     adresse: settings.contact_address,
     marque: settings.brand_name,
     politique_annulation: settings.cancellation_policy,
+    lien_gestion: settings.site_url ? `${settings.site_url.replace(/\/$/, "")}/rdv/${appointment.manage_token}` : "",
   };
 
   const template = await getEmailTemplate(kind);

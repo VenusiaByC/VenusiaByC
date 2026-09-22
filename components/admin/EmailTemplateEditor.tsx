@@ -12,6 +12,7 @@ const VARIABLES = [
   { key: "adresse", desc: "Adresse configurée dans Paramètres" },
   { key: "marque", desc: "Nom de ta marque (Venusia)" },
   { key: "politique_annulation", desc: "Ta politique d'annulation" },
+  { key: "lien_gestion", desc: "Lien pour annuler/modifier (utile dans la confirmation)" },
 ];
 
 export function EmailTemplateEditor({

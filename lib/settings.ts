@@ -39,6 +39,8 @@ export type SiteSettings = {
   loyalty_reward_threshold: string;
   loyalty_reward_description: string;
   owner_notification_email: string;
+  site_url: string;
+  min_cancellation_hours: string;
 };
 
 const DEFAULT_SETTINGS: SiteSettings = {
@@ -67,6 +69,8 @@ const DEFAULT_SETTINGS: SiteSettings = {
   loyalty_reward_threshold: "10",
   loyalty_reward_description: "10% de réduction sur la prochaine prestation",
   owner_notification_email: "",
+  site_url: "",
+  min_cancellation_hours: "24",
 };
 
 export async function getSiteSettings(): Promise<SiteSettings> {
