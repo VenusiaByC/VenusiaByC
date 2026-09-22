@@ -20,7 +20,15 @@ async function getFeaturedServices() {
   }
 }
 
-async function getOpenHoursSummary() {
+async function getGalleryPreview() {
+  try {
+    const supabase = createClient();
+    const { data } = await supabase.from("gallery_photos").select("id, image_url, caption").order("display_order").limit(4);
+    return data ?? [];
+  } catch {
+    return [];
+  }
+}
   try {
     const supabase = createClient();
     const { data } = await supabase
@@ -46,10 +54,11 @@ async function getOpenHoursSummary() {
 }
 
 export default async function HomePage() {
-  const [settings, services, hours] = await Promise.all([
+  const [settings, services, hours, galleryPreview] = await Promise.all([
     getSiteSettings(),
     getFeaturedServices(),
     getOpenHoursSummary(),
+    getGalleryPreview(),
   ]);
 
   return (
@@ -59,6 +68,7 @@ export default async function HomePage() {
           <Logo brandName={settings.brand_name} logoUrl={settings.logo_url} size="sm" />
           <nav className="hidden gap-9 text-sm text-ink-soft md:flex">
             <a href="#prestations" className="hover:text-ink">Prestations</a>
+            <a href="/galerie" className="hover:text-ink">Galerie</a>
             <a href="#contact" className="hover:text-ink">Contact</a>
           </nav>
           <a
@@ -154,6 +164,22 @@ export default async function HomePage() {
           )}
         </div>
       </section>
+
+      {galleryPreview.length > 0 && (
+        <section className="px-7 py-20">
+          <div className="mx-auto max-w-6xl">
+            <div className="mb-10 flex items-end justify-between">
+              <h2 className="font-serif text-3xl md:text-4xl">Nos réalisations</h2>
+              <a href="/galerie" className="text-sm text-ink-soft underline">Voir toute la galerie →</a>
+            </div>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {galleryPreview.map((p) => (
+                <img key={p.id} src={p.image_url} alt={p.caption ?? ""} className="aspect-square w-full rounded-sm object-cover" />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <section id="contact" className="px-7 pb-20">
         <div className="mx-auto grid max-w-6xl gap-10 rounded-sm bg-ink px-10 py-14 text-bg sm:grid-cols-3 sm:px-14">
