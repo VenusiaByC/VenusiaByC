@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { searchClients, getSlotsForDateAdmin, createManualAppointment } from "@/app/actions/admin-appointments";
 import { formatParisTime } from "@/lib/timezone";
+import { formatDuration } from "@/lib/format";
 
 type Service = { id: string; name: string; price: number; duration_minutes: number };
 type ClientResult = { id: string; first_name: string; last_name: string; phone: string | null; email: string | null };
@@ -141,7 +142,7 @@ export function NewAppointmentForm({ services }: { services: Service[] }) {
           <option value="">Choisir une prestation</option>
           {services.map((s) => (
             <option key={s.id} value={s.id}>
-              {s.name} — {s.duration_minutes} min — {s.price} €
+              {s.name} — {formatDuration(s.duration_minutes)} — {s.price} €
             </option>
           ))}
         </select>

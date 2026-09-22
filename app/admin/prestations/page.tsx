@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { listServicesAdmin } from "@/app/actions/admin-services";
+import { formatDuration } from "@/lib/format";
 
 export default async function PrestationsPage() {
   const services = await listServicesAdmin();
@@ -39,7 +40,7 @@ export default async function PrestationsPage() {
                       </span>
                     )}
                   </div>
-                  <div className="text-sm text-ink-soft">{s.duration_minutes} min</div>
+                  <div className="text-sm text-ink-soft">{formatDuration(s.duration_minutes)}</div>
                 </div>
               </div>
               <div className="font-serif italic text-accent">{s.price} €</div>

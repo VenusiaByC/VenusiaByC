@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { getSlotsForDate, createAppointment } from "@/app/actions/booking";
+import { formatDuration } from "@/lib/format";
 
 type Service = {
   id: string;
@@ -105,7 +106,7 @@ export function BookingFlow({ services }: { services: Service[] }) {
             >
               <div>
                 <div className="font-medium">{s.name}</div>
-                <div className="text-sm text-ink-soft">{s.duration_minutes} min</div>
+                <div className="text-sm text-ink-soft">{formatDuration(s.duration_minutes)}</div>
               </div>
               <div className="font-serif italic text-accent">{s.price} €</div>
             </button>
