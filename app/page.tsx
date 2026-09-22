@@ -259,6 +259,14 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      <div className="px-7 pb-8">
+        <div className="mx-auto flex max-w-6xl flex-wrap gap-4 text-xs text-ink-soft">
+          <a href="/mentions-legales" className="underline hover:text-ink">Mentions légales</a>
+          <a href="/cgv" className="underline hover:text-ink">Conditions générales de vente</a>
+          <a href="/confidentialite" className="underline hover:text-ink">Politique de confidentialité</a>
+        </div>
+      </div>
     </main>
   );
 }
